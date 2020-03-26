@@ -16,3 +16,6 @@
 .square-start {
   background-color: burlywood;
 }
+.square-empty {
+  background-color: rgb(190, 227, 247);
+}
