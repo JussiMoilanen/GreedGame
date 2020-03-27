@@ -1,5 +1,7 @@
 import React from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Container from "@material-ui/core/Container";
+import "../App.css";
 
 export default class Score extends React.Component {
   render() {
@@ -13,8 +15,14 @@ export default class Score extends React.Component {
     let roundedPercentage = Math.round(completedArea * 100) / 100;
     return (
       <React.Fragment>
-        <div>{roundedPercentage}%</div>
-        <LinearProgress variant="determinate" value={completedArea} />
+        <div className={"scoreArea"}>
+          {roundedPercentage}%
+          <LinearProgress
+            width="25%"
+            variant="determinate"
+            value={completedArea}
+          />
+        </div>
       </React.Fragment>
     );
   }

@@ -47,6 +47,11 @@ export default class Grid extends React.Component {
     const grid = initGrid();
     this.setState({ grid });
     document.addEventListener("keydown", this.handlekeypress);
+    let row = START_ROW;
+    let col = START_COLUMN;
+    this.setState(prevState => ({
+      visitedSquares: [...prevState.visitedSquares, { row, col }]
+    }));
   }
 
   handleMouseDown(row, col, grid) {
@@ -86,13 +91,13 @@ export default class Grid extends React.Component {
       if (event.keyCode === eventCodes.LEFT) {
         // KEYINPUT LEFT
         if (this.preventOppositeDirection(DIRECTION.LEFT)) {
-          this.setState({
-            previousDirection: DIRECTION.LEFT
-          });
           let wallAhead = this.checkIncomingWall(DIRECTION.LEFT, squareNum);
 
           // handle border and walls
           if (col >= squareNum && !wallAhead) {
+            this.setState({
+              previousDirection: DIRECTION.LEFT
+            });
             this.setState({
               activeSquare: {
                 row: row,
@@ -106,13 +111,13 @@ export default class Grid extends React.Component {
       // KEYINPUT UP
       if (event.keyCode === eventCodes.UP) {
         if (this.preventOppositeDirection(DIRECTION.UP)) {
-          this.setState({
-            previousDirection: DIRECTION.UP
-          });
           let wallAhead = this.checkIncomingWall(DIRECTION.UP, squareNum);
 
           // handle border and walls
           if (row >= squareNum && !wallAhead) {
+            this.setState({
+              previousDirection: DIRECTION.UP
+            });
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row - squareNum,
@@ -126,13 +131,13 @@ export default class Grid extends React.Component {
       // KEYINPUT RIGHT
       if (event.keyCode === eventCodes.RIGHT) {
         if (this.preventOppositeDirection(DIRECTION.RIGHT)) {
-          this.setState({
-            previousDirection: DIRECTION.RIGHT
-          });
           let wallAhead = this.checkIncomingWall(DIRECTION.RIGHT, squareNum);
 
           // handle border and walls
           if (COLUMNS - col > squareNum && !wallAhead) {
+            this.setState({
+              previousDirection: DIRECTION.RIGHT
+            });
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row,
@@ -146,13 +151,13 @@ export default class Grid extends React.Component {
       // KEYINPUT DOWN
       if (event.keyCode === eventCodes.DOWN) {
         if (this.preventOppositeDirection(DIRECTION.DOWN)) {
-          this.setState({
-            previousDirection: DIRECTION.DOWN
-          });
           let wallAhead = this.checkIncomingWall(DIRECTION.DOWN, squareNum);
 
           // handle border and walls
           if (ROWS - row > squareNum && !wallAhead) {
+            this.setState({
+              previousDirection: DIRECTION.DOWN
+            });
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row + squareNum,
@@ -171,7 +176,7 @@ export default class Grid extends React.Component {
     let oldcol = startSquare.col;
 
     // 1 = left, 2 = up, 3 = right, 4 = down
-    for (let i = 0; i <= squareNum; i++) {
+    for (let i = 1; i <= squareNum; i++) {
       if (direction === 1) {
         let col = oldcol - i;
         let row = oldrow;

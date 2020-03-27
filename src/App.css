@@ -19,3 +19,10 @@
 .square-empty {
   background-color: rgb(190, 227, 247);
 }
+.scoreArea {
+  width: 400px;
+  margin: auto;
+  width: 50%;
+  border: 1px solid black;
+  padding: 10px;
+}
