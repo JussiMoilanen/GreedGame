@@ -1,10 +1,9 @@
 import React from "react";
 import Square from "./square.jsx";
 import Score from "./gamescore.jsx";
-import Button from "@material-ui/core/Button";
+import NavBar from "./navbar";
+import { Button } from "react-bootstrap";
 import "../App.css";
-import { lighten, makeStyles, withStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
 
 const START_ROW = 3;
 const START_COLUMN = 3;
@@ -39,7 +38,8 @@ export default class Grid extends React.Component {
         col: START_COLUMN
       },
       visitedSquares: [],
-      previousDirection: null
+      previousDirection: null,
+      gameOver: false
     };
   }
 
@@ -298,7 +298,7 @@ export default class Grid extends React.Component {
         ? true
         : false;
     if (goLeft && goUp && goRight && goDown) {
-      alert("gameover");
+      this.setState({ gameOver: true });
       return true;
     }
 
@@ -306,42 +306,55 @@ export default class Grid extends React.Component {
   };
 
   render() {
-    const { grid, isMousePressed, activeSquare, visitedSquares } = this.state;
+    const {
+      grid,
+      isMousePressed,
+      activeSquare,
+      visitedSquares,
+      gameOver
+    } = this.state;
     return (
       <React.Fragment>
-        <Button
-          onClick={() => window.location.reload()}
-          variant="contained"
-          color="primary"
-        >
-          Refresh the grid!
-        </Button>
-        <Score visitedSquares={visitedSquares}></Score>
-        <div className="grid-base">
-          {grid.map((row, column) => {
-            return (
-              <div key={column} className="grid-row">
-                {row.map((square, index) => {
-                  const { row, column, startSquare, num } = square;
-                  return (
-                    <Square
-                      key={index}
-                      isMousePressed={isMousePressed}
-                      row={row}
-                      column={column}
-                      num={num}
-                      activeSquare={activeSquare}
-                      visitedSquares={visitedSquares}
-                      startSquare={startSquare}
-                      onMouseDown={(row, column) =>
-                        this.handleMouseDown(row, column, grid)
-                      }
-                    ></Square>
-                  );
-                })}
-              </div>
-            );
-          })}
+        <NavBar></NavBar>
+        <div className={"gameArea"}>
+          <div></div>
+          <div className="grid-base">
+            {grid.map((row, column) => {
+              return (
+                <div key={column} className="grid-row">
+                  {row.map((square, index) => {
+                    const { row, column, startSquare, num } = square;
+                    return (
+                      <Square
+                        key={index}
+                        isMousePressed={isMousePressed}
+                        row={row}
+                        column={column}
+                        num={num}
+                        activeSquare={activeSquare}
+                        visitedSquares={visitedSquares}
+                        startSquare={startSquare}
+                        onMouseDown={(row, column) =>
+                          this.handleMouseDown(row, column, grid)
+                        }
+                      ></Square>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+          <div id="gameInfo">
+            {" "}
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline-info"
+              color="primary"
+            >
+              Refresh the grid!
+            </Button>
+            <Score visitedSquares={visitedSquares} gameOver={gameOver}></Score>
+          </div>
         </div>
       </React.Fragment>
     );
