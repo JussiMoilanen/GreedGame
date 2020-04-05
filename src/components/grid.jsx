@@ -1,10 +1,14 @@
 import React from "react";
 import Square from "./square.jsx";
 import Score from "./gamescore.jsx";
-import NavBar from "./navbar";
+import NavBar from "./navbar.jsx";
+import ScoreBoard from "./scoreboard.jsx";
+import GiveName from "./form.jsx";
 import { Button } from "react-bootstrap";
 import "../App.css";
 
+const gameLogic = require("../gamelogic.js");
+const data = require("../gameresult.json");
 const START_ROW = 3;
 const START_COLUMN = 3;
 const ROWS = 15;
@@ -38,8 +42,11 @@ export default class Grid extends React.Component {
         col: START_COLUMN
       },
       visitedSquares: [],
+      previousSquareNums: [],
       previousDirection: null,
-      gameOver: false
+      gameOver: false,
+      data: [],
+      modalOpen: false
     };
   }
 
@@ -47,23 +54,49 @@ export default class Grid extends React.Component {
     const grid = initGrid();
     this.setState({ grid });
     document.addEventListener("keydown", this.handlekeypress);
+
     let row = START_ROW;
     let col = START_COLUMN;
     this.setState(prevState => ({
       visitedSquares: [...prevState.visitedSquares, { row, col }]
     }));
+
+    this.setState({ data });
   }
+
+  handleSubmit = event => {
+    const form = event.currentTarget;
+    console.log(form);
+  };
 
   handleMouseDown(row, col, grid) {
     console.log("r:", row, "c:", col);
     this.setState({ isMousePressed: true });
-    this.setState({
-      activeSquare: {
-        row: row,
-        col: col
-      }
-    });
+    // this.setState({
+    //   activeSquare: {
+    //     row: row,
+    //     col: col
+    //   }
+    // });
   }
+
+  undo = () => {
+    this.setState({ previousDirection: null });
+    let previousSquareNums = this.state.previousSquareNums;
+    let previousNum = previousSquareNums[previousSquareNums.length - 1];
+    let visitedSquares = this.state.visitedSquares;
+
+    for (let i = 0; i < previousNum; i++) {
+      visitedSquares.pop();
+    }
+    previousSquareNums.pop();
+
+    let newActiveRow = visitedSquares[visitedSquares.length - 1].row;
+    let newActiveCol = visitedSquares[visitedSquares.length - 1].col;
+
+    this.updateActiveSquareState(newActiveRow, newActiveCol);
+  };
+
   updateActiveSquareState = (row, col) => {
     this.setState({
       activeSquare: {
@@ -72,6 +105,8 @@ export default class Grid extends React.Component {
       }
     });
   };
+
+  updateStatesKeyPressSuccess = direction => {};
 
   handlekeypress = event => {
     let grid = this.state.grid;
@@ -98,6 +133,9 @@ export default class Grid extends React.Component {
             this.setState({
               previousDirection: DIRECTION.LEFT
             });
+            this.setState(prevState => ({
+              previousSquareNums: [...prevState.previousSquareNums, squareNum]
+            }));
             this.setState({
               activeSquare: {
                 row: row,
@@ -118,6 +156,9 @@ export default class Grid extends React.Component {
             this.setState({
               previousDirection: DIRECTION.UP
             });
+            this.setState(prevState => ({
+              previousSquareNums: [...prevState.previousSquareNums, squareNum]
+            }));
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row - squareNum,
@@ -138,6 +179,9 @@ export default class Grid extends React.Component {
             this.setState({
               previousDirection: DIRECTION.RIGHT
             });
+            this.setState(prevState => ({
+              previousSquareNums: [...prevState.previousSquareNums, squareNum]
+            }));
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row,
@@ -158,6 +202,9 @@ export default class Grid extends React.Component {
             this.setState({
               previousDirection: DIRECTION.DOWN
             });
+            this.setState(prevState => ({
+              previousSquareNums: [...prevState.previousSquareNums, squareNum]
+            }));
             this.setState({
               activeSquare: {
                 row: this.state.activeSquare.row + squareNum,
@@ -317,8 +364,12 @@ export default class Grid extends React.Component {
       <React.Fragment>
         <NavBar></NavBar>
         <div className={"gameArea"}>
-          <div></div>
           <div className="grid-base">
+            <Button onClick={() => this.undo()} variant="outline-primary">
+              Undo
+            </Button>
+            {/* <GiveName handleSubmit={this.handleSubmit}></GiveName> */}
+            <Score visitedSquares={visitedSquares} gameOver={gameOver}></Score>
             {grid.map((row, column) => {
               return (
                 <div key={column} className="grid-row">
@@ -344,16 +395,16 @@ export default class Grid extends React.Component {
               );
             })}
           </div>
-          <div id="gameInfo">
-            {" "}
+          <div className={"gameInfo"}>
             <Button
               onClick={() => window.location.reload()}
               variant="outline-info"
               color="primary"
+              block
             >
               Refresh the grid!
             </Button>
-            <Score visitedSquares={visitedSquares} gameOver={gameOver}></Score>
+            <ScoreBoard data={data}></ScoreBoard>
           </div>
         </div>
       </React.Fragment>

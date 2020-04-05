@@ -8,32 +8,34 @@ export default class Square extends React.Component {
       onMouseDown,
       row,
       column,
-      startSquare,
       num,
-      visitedSquares
+      visitedSquares,
+      activeSquare
     } = this.props;
 
-    let start_square_style = startSquare ? "square-start" : "square";
-    // if ((activeSquare.row === row) & (activeSquare.col === column)) {
-    //   start_square_style = "square-empty";
-    // }
+    let square_style = "";
 
     for (let i = 0; i < visitedSquares.length; ++i) {
       if (
         (visitedSquares[i].row === row) &
         (visitedSquares[i].col === column)
       ) {
-        start_square_style = "square-empty";
+        square_style = "square-empty";
       }
     }
 
-    // const square_empty = (grid[row][col].num = 0 ? "square-empty" : "square");
+    let square_active =
+      activeSquare.row === row && activeSquare.col === column
+        ? "square-active"
+        : "";
+
+    let style = `square ${square_style}`;
+    if (square_active === "square-active") {
+      style = `square ${square_active}`;
+    }
 
     return (
-      <div
-        className={`square ${start_square_style}`}
-        onMouseDown={() => onMouseDown(row, column)}
-      >
+      <div className={style} onMouseDown={() => onMouseDown(row, column)}>
         {num}
       </div>
     );

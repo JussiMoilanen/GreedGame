@@ -19,7 +19,7 @@ export default class Score extends React.Component {
       <React.Fragment>
         <div className={"scoreArea"}>
           {roundedPercentage}%
-          <ProgressBar variant="success" now={completedArea} />
+          <ProgressBar animated now={completedArea} />
         </div>
         <div className={"gameOver"}> {gameOverMsg}</div>
       </React.Fragment>
